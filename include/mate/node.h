@@ -3,8 +3,8 @@
 
 #include <malloc.h>
 
-#include "kilate/bool.h"
-#include "kilate/vector.h"
+#include "mate/bool.h"
+#include "mate/vector.h"
 
 #ifdef __cplusplus
 extern "C" {

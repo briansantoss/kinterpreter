@@ -1,10 +1,10 @@
-#include "kilate/vector.h"
+#include "mate/vector.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "kilate/error.h"
+#include "mate/error.h"
 
 vector_t *vector_make(size_t itemSize)
 {

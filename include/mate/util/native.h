@@ -4,8 +4,8 @@
 #include <stddef.h>
 #include <stdlib.h>
 
-#include "kilate/native.h"
-#include "kilate/node.h"
+#include "mate/native.h"
+#include "mate/node.h"
 
 #ifdef __cplusplus
 extern "C" {

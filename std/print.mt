@@ -1,7 +1,7 @@
 // EXAMPLE!!! FILE OF REAL STANDARD LIBRARY PRINT.
 
-import "kilate/stream.klt"
+import "mate/stream.mt"
 
-work print(const text: String) {
+work Print(const text: String) {
         stdout.Write -> text
 }

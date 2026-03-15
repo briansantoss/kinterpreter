@@ -1,4 +1,4 @@
-#include "kilate/parser.h"
+#include "mate/parser.h"
 
 #include <malloc.h>
 #include <stdarg.h>
@@ -8,13 +8,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "kilate/debug.h"
-#include "kilate/file.h"
-#include "kilate/lexer.h"
-#include "kilate/native.h"
-#include "kilate/node.h"
-#include "kilate/string.h"
-#include "kilate/vector.h"
+#include "mate/debug.h"
+#include "mate/file.h"
+#include "mate/lexer.h"
+#include "mate/native.h"
+#include "mate/node.h"
+#include "mate/string.h"
+#include "mate/vector.h"
 
 parser_t *parser_make(token_vector_t *tokens)
 {
@@ -746,12 +746,12 @@ void parser_parse_program(parser_t *p)
         } while ((parser_current(p, 0))->type != TOKEN_EOF);
 }
 
-void parser_error(token_t *tk, char *fmt, ...)
+void parser_error(token_t *tk, char *fmate, ...)
 {
         va_list args;
-        va_start(args, fmt);
+        va_start(args, fmate);
         fprintf(stderr, "[Error At %zu:%zu] ", tk->line, tk->column);
-        vprintf(fmt, args);
+        vprintf(fmate, args);
         printf("\n");
         va_end(args);
         exit(1);

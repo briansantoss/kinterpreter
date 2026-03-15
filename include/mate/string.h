@@ -4,7 +4,7 @@
 #include <stdarg.h>
 #include <stdlib.h>
 
-#include "kilate/vector.h"
+#include "mate/vector.h"
 
 #ifdef __cplusplus
 extern "C" {

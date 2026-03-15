@@ -1,12 +1,12 @@
-#include "kilate/node.h"
+#include "mate/node.h"
 
 #include <stdlib.h>
 #include <string.h>
 
-#include "kilate/debug.h"
-#include "kilate/environment.h"
-#include "kilate/interpreter.h"
-#include "kilate/vector.h"
+#include "mate/debug.h"
+#include "mate/environment.h"
+#include "mate/interpreter.h"
+#include "mate/vector.h"
 
 void node_delete(node_t *n)
 {

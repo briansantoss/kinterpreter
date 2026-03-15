@@ -1,4 +1,4 @@
-#include "kilate/native.h"
+#include "mate/native.h"
 
 #include <dirent.h>
 #include <dlfcn.h>
@@ -8,10 +8,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "kilate/config.h"
-#include "kilate/node.h"
-#include "kilate/string.h"
-#include "kilate/vector.h"
+#include "mate/config.h"
+#include "mate/node.h"
+#include "mate/string.h"
+#include "mate/vector.h"
 
 node_vector_t *native_functions = NULL;
 
@@ -48,11 +48,11 @@ void native_load_extern()
                                 }
 
                                 void (*extern_native_init)() =
-                                    dlsym(handle, "KILATE_NATIVE_REGISTER");
+                                    dlsym(handle, "MATE_NATIVE_REGISTER");
                                 if (!extern_native_init) {
                                         fprintf(
                                             stderr,
-                                            "Function KILATE_NATIVE_REGISTER "
+                                            "Function MATE_NATIVE_REGISTER "
                                             "not found in %s\n",
                                             path);
                                         continue;
