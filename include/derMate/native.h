@@ -1,9 +1,9 @@
 #ifndef __NATIVE_H__
 #define __NATIVE_H__
 
-#include "mate/environment.h"
-#include "mate/interpreter.h"
-#include "mate/string.h"
+#include "derMate/environment.h"
+#include "derMate/interpreter.h"
+#include "derMate/string.h"
 
 #ifdef __cplusplus
 extern "C" {

@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 
-#include "mate/vector.h"
+#include "derMate/vector.h"
 
 #ifdef __cplusplus
 extern "C" {

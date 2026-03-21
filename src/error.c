@@ -1,15 +1,15 @@
-#include "mate/error.h"
+#include "derMate/error.h"
 
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-void error_fatal(char *fmate, ...)
+void error_fatal(char *fderMate, ...)
 {
         va_list args;
-        va_start(args, fmate);
+        va_start(args, fderMate);
         fprintf(stderr, "[ERROR] ");
-        vprintf(fmate, args);
+        vprintf(fderMate, args);
         printf("\n");
         va_end(args);
         exit(1);

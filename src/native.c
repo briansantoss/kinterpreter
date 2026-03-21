@@ -1,4 +1,4 @@
-#include "mate/native.h"
+#include "derMate/native.h"
 
 #include <dirent.h>
 #include <dlfcn.h>
@@ -8,10 +8,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "mate/config.h"
-#include "mate/node.h"
-#include "mate/string.h"
-#include "mate/vector.h"
+#include "derMate/config.h"
+#include "derMate/node.h"
+#include "derMate/string.h"
+#include "derMate/vector.h"
 
 node_vector_t *native_functions = NULL;
 

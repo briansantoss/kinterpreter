@@ -1,9 +1,9 @@
-#include "mate/util/native.h"
+#include "derMate/util/native.h"
 
 #include <stdlib.h>
 #include <string.h>
 
-#include "mate/native.h"
+#include "derMate/native.h"
 
 char *native_fndata_getstr(native_fndata_t *data, size_t index)
 {

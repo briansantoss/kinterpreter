@@ -1,12 +1,12 @@
-#include "mate/node.h"
+#include "derMate/node.h"
 
 #include <stdlib.h>
 #include <string.h>
 
-#include "mate/debug.h"
-#include "mate/environment.h"
-#include "mate/interpreter.h"
-#include "mate/vector.h"
+#include "derMate/debug.h"
+#include "derMate/environment.h"
+#include "derMate/interpreter.h"
+#include "derMate/vector.h"
 
 void node_delete(node_t *n)
 {
