@@ -1,8 +1,8 @@
-#ifndef __ENVIRONMENT_H__
-#define __ENVIRONMENT_H__
+#ifndef KILATE_ENVIRONMENT_H
+#define KILATE_ENVIRONMENT_H
 
-#include "kilate/bool.h"
 #include "kilate/node.h"
+#include <stdbool.h>
 
 #ifdef __cplusplus
 extern "C" {

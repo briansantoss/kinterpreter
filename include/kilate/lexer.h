@@ -1,10 +1,6 @@
-#ifndef __LEXER_H__
-#define __LEXER_H__
+#ifndef KILATE_LEXER_H
+#define KILATE_LEXER_H
 
-#include <stdarg.h>
-
-#include "kilate/bool.h"
-#include "kilate/string.h"
 #include "kilate/vector.h"
 
 #ifdef __cplusplus
@@ -56,10 +52,6 @@ typedef struct {
 lexer_t *lexer_make(char *);
 
 void lexer_delete(lexer_t *);
-
-void lexer_advance(lexer_t *);
-
-char *lexer_read_string(lexer_t *, bool *);
 
 void lexer_tokenize(lexer_t *);
 

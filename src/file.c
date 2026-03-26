@@ -1,86 +1,38 @@
 #include "kilate/file.h"
 
-#include <errno.h>
-#include <fcntl.h>
-#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <sys/types.h>
-#include <unistd.h>
 
-#include "kilate/error.h"
-#include "kilate/string.h"
-
-// Opens a file
-// After do all uses with file, close it
-// with file_close
-int file_open(file_t *file, const char *filepath, file_mode_t mode)
+const char *file_read_all(const char *path)
 {
-        int fd = -1;
-        if (mode == FILE_MODE_READ) {
-                fd = open(filepath, O_RDONLY);
-        } else if (mode == FILE_MODE_WRITE) {
-                fd = open(filepath, O_WRONLY);
-        } else if (mode == FILE_MODE_RW) {
-                fd = open(filepath, O_RDWR);
+        // Binary mode handles differences in line terminator (LF vs CRLF)
+        FILE *file = fopen(path, "rb");
+        if (file == NULL)
+                error_exit("Not able to open file '%s'", path);
+
+        long size;
+        if (fseek(file, 0L, SEEK_END) != 0 || (size = ftell(file)) < 0) {
+                fclose(file);
+                error_exit("Failed to prepare file buffer for '%s'", path);
+        }
+        rewind(file);
+
+        // Ensure a valid pointer is returned even for empty files
+        char *buffer = malloc(size + 1);
+        if (buffer == NULL) {
+                fclose(file);
+                error_exit("Not enough memory to read file '%s'", path);
         }
 
-        if (fd < 0) {
-                perror("Failed to open file");
-                return -1;
-        }
-
-        file->fd = fd;
-        return 0;
-}
-
-int file_close(file_t *file)
-{
-        if (!file || file->fd < 0)
-                return -1;
-
-        close(file->fd);
-        return 0;
-}
-
-// Returns the length of file content.
-size_t file_get_length(file_t *file)
-{
-        if (!file || file->fd < 0)
-                return 0;
-        size_t len = lseek(file->fd, 0, SEEK_END);
-        lseek(file->fd, 0, SEEK_SET);
-        return len;
-}
-
-// Reads the content of file.
-// Result should be free.
-char *file_read_text(file_t *file)
-{
-        if (!file || file->fd < 0)
-                return 0;
-
-        size_t len = file_get_length(file);
-        if (len < 0) {
-                error_fatal("Can't read a empty file. Errno: %s",
-                            strerror(errno));
-                return NULL;
-        }
-
-        char *buffer = malloc(len + 1);
-        if (!buffer) {
-                error_fatal("Can't alloc memory for reading file. Errno: %s",
-                            strerror(errno));
-                return NULL;
-        }
-
-        if (read(file->fd, buffer, len) < 0) {
-                error_fatal("Failed to read file. Errno: %s", strerror(errno));
+        size_t bytes_read = fread(buffer, sizeof(char), (size_t)size, file);
+        if (bytes_read < size) {
+                fclose(file);
                 free(buffer);
-                return NULL;
+                error_exit("Could not read file  '%s'", path);
         }
+        mate_assert(bytes_read == (size_t)size); // Sanity-check
+        buffer[size] = '\0';
 
-        buffer[len] = '\0';
+        fclose(file);
         return buffer;
 }

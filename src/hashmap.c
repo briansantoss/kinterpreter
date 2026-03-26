@@ -4,8 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "kilate/error.h"
-#include "kilate/string.h"
+#include "kilate/base.h"
+#include "kilate/stringutils.h"
 
 hashmap_t *hash_map_make(size_t itemSize)
 {
@@ -38,9 +38,9 @@ void hash_map_delete(hashmap_t *self)
 unsigned int hash_map_hash(hashmap_t *self, char *key)
 {
         if (self == NULL)
-                error_fatal("Hashmap is null.");
+                error_exit("Hashmap is null.");
         if (key == NULL)
-                error_fatal("Key is null.");
+                error_exit("Key is null.");
 
         unsigned int hash = 5381;
         int c;
@@ -52,9 +52,9 @@ unsigned int hash_map_hash(hashmap_t *self, char *key)
 void *hash_map_get(hashmap_t *self, char *key)
 {
         if (self == NULL)
-                error_fatal("Hashmap is null.");
+                error_exit("Hashmap is null.");
         if (key == NULL)
-                error_fatal("Key is null.");
+                error_exit("Key is null.");
 
         unsigned int index = hash_map_hash(self, key);
 
@@ -73,9 +73,9 @@ void *hash_map_get(hashmap_t *self, char *key)
 void hash_map_put(hashmap_t *self, char *key, void *value)
 {
         if (self == NULL)
-                error_fatal("Hashmap is null.");
+                error_exit("Hashmap is null.");
         if (key == NULL)
-                error_fatal("Key is null.");
+                error_exit("Key is null.");
 
         unsigned int index = hash_map_hash(self, key);
         hashentry_t **headPtr = (hashentry_t **)vector_get(self->itens, index);

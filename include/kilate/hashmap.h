@@ -1,7 +1,5 @@
-#ifndef __HASHMAP_H__
-#define __HASHMAP_H__
-
-#include <stdio.h>
+#ifndef KILATE_HASHMAP_H
+#define KILATE_HASHMAP_H
 
 #include "kilate/vector.h"
 

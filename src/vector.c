@@ -4,13 +4,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "kilate/error.h"
+#include "kilate/base.h"
 
 vector_t *vector_make(size_t itemSize)
 {
         vector_t *self = malloc(sizeof(vector_t));
         if (itemSize == 0)
-                error_fatal("Item size cant be 0");
+                error_exit("Item size cant be 0");
         if (self == NULL) {
                 printf("Failed to create vector, Out Of Memory.\n");
                 return NULL;
@@ -25,7 +25,7 @@ vector_t *vector_make(size_t itemSize)
 void vector_delete(vector_t *self)
 {
         if (self == NULL)
-                error_fatal("Vector is null");
+                error_exit("Vector is null");
         if (self == NULL)
                 return;
         free(self->data);
@@ -35,9 +35,9 @@ void vector_delete(vector_t *self)
 const void *vector_get(vector_t *self, size_t index)
 {
         if (self == NULL)
-                error_fatal("Vector is null");
+                error_exit("Vector is null");
         if (index >= self->size)
-                error_fatal("Index can't be higher or equal vector size.");
+                error_exit("Index can't be higher or equal vector size.");
 
         return (char *)(self->data) + index * self->itemSize;
 }
@@ -45,7 +45,7 @@ const void *vector_get(vector_t *self, size_t index)
 void vector_reserve(vector_t *self, const size_t size)
 {
         if (self == NULL)
-                error_fatal("Vector is null");
+                error_exit("Vector is null");
         if (self->capacity <= size) {
                 self->data = realloc(self->data, size * self->itemSize);
                 memset((char *)self->data + self->capacity * self->itemSize, 0,
@@ -57,9 +57,9 @@ void vector_reserve(vector_t *self, const size_t size)
 void vector_set(vector_t *self, size_t index, const void *item)
 {
         if (self == NULL)
-                error_fatal("Vector is null");
+                error_exit("Vector is null");
         if (index >= self->size)
-                error_fatal("Index can't be higher or equal vector size.");
+                error_exit("Index can't be higher or equal vector size.");
 
         memcpy((char *)self->data + index * self->itemSize, item,
                self->itemSize);
@@ -68,9 +68,9 @@ void vector_set(vector_t *self, size_t index, const void *item)
 void vector_insert(vector_t *self, size_t index, const void *item)
 {
         if (self == NULL)
-                error_fatal("Vector is null");
+                error_exit("Vector is null");
         if (!(index <= self->size))
-                error_fatal("Index can't be higher than vector size");
+                error_exit("Index can't be higher than vector size");
 
         if (self->capacity <= self->size) {
                 vector_reserve(self, 2 * self->capacity);
@@ -91,9 +91,9 @@ void vector_push_back(vector_t *self, const void *item)
 void vector_remove(vector_t *self, size_t index)
 {
         if (self == NULL)
-                error_fatal("Vector is null");
+                error_exit("Vector is null");
         if (index >= self->size)
-                error_fatal("Index can't be higher or equal vector size.");
+                error_exit("Index can't be higher or equal vector size.");
 
         if (index < self->size - 1) {
                 memmove((char *)self->data + index * self->itemSize,

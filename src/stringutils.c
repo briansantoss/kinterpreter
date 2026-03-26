@@ -1,10 +1,8 @@
-#include "kilate/string.h"
+#include "kilate/stringutils.h"
 
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include "kilate/bool.h"
-#include "kilate/error.h"
 
 size_t str_index_of(const char *s, char ch, size_t offset)
 {
@@ -32,20 +30,20 @@ char *str_substring(const char *s, size_t start, size_t end)
         return result;
 }
 
-char *str_format(const char *fmt, ...)
+char *str_format(const char *fderMate, ...)
 {
         va_list args;
-        va_start(args, fmt);
+        va_start(args, fderMate);
 
-        size_t len = vsnprintf(NULL, 0, fmt, args);
+        size_t len = vsnprintf(NULL, 0, fderMate, args);
         va_end(args);
 
         char *buffer = malloc(len + 1);
         if (!buffer)
                 return NULL;
 
-        va_start(args, fmt);
-        vsnprintf(buffer, len + 1, fmt, args);
+        va_start(args, fderMate);
+        vsnprintf(buffer, len + 1, fderMate, args);
         va_end(args);
 
         return buffer;

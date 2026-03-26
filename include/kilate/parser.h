@@ -1,11 +1,8 @@
-#ifndef __PARSER_H__
-#define __PARSER_H__
-
-#include <stdarg.h>
+#ifndef KILATE_PARSER_H
+#define KILATE_PARSER_H
 
 #include "kilate/lexer.h"
 #include "kilate/node.h"
-#include "kilate/string.h"
 
 #ifdef __cplusplus
 extern "C" {

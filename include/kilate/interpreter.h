@@ -1,10 +1,10 @@
-#ifndef __INTERPRETER_H__
-#define __INTERPRETER_H__
+#ifndef KILATE_INTERPRETER_H
+#define KILATE_INTERPRETER_H
 
 #include "kilate/environment.h"
 #include "kilate/hashmap.h"
 #include "kilate/node.h"
-#include "kilate/string.h"
+#include "kilate/stringutils.h"
 
 #ifdef __cplusplus
 extern "C" {

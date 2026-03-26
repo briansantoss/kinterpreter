@@ -1,9 +1,8 @@
-#include "kilate/util/native.h"
+#include "kilate/nativeutils.h"
 
 #include <stdlib.h>
 #include <string.h>
-
-#include "kilate/native.h"
+#include <stdbool.h>
 
 char *native_fndata_getstr(native_fndata_t *data, size_t index)
 {

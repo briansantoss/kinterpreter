@@ -186,7 +186,6 @@ safe_value_t get_safe_value(interpreter_t *inter, arg_node_t *arg)
 {
         safe_value_t result = { 0 };
 
-        printd("213: %d\n", arg->arg_n.type);
         if (arg->arg_n.type == NODE_VALUE_TYPE_VAR) {
                 node_t *var = env_getvar(inter->env, arg->arg_n.s);
                 if (var) {

@@ -2,16 +2,15 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
-#include "kilate/bool.h"
-#include "kilate/error.h"
-#include "kilate/string.h"
+#include "kilate/stringutils.h"
 
 env_t *env_make(env_t *parent)
 {
         env_t *env = malloc(sizeof(env_t));
         if (env == NULL)
-                error_fatal("Failed to allocate environment");
+                error_exit("Failed to allocate environment");
 
         env->variables = NULL;
         env->parent = parent;
@@ -40,7 +39,7 @@ void env_destroy(env_t *env)
 bool env_definevar(env_t *env, const char *name, void *value)
 {
         if (env == NULL || name == NULL)
-                error_fatal("Environment or name is null.");
+                error_exit("Environment or name is null.");
 
         env_entry_t *current = env->variables;
         while (current) {
@@ -65,7 +64,7 @@ bool env_definevar(env_t *env, const char *name, void *value)
 node_t *env_getvar(env_t *env, const char *name)
 {
         if (env == NULL || name == NULL)
-                error_fatal("Environment or name is null.");
+                error_exit("Environment or name is null.");
 
         env_t *current_env = env;
         while (current_env) {
@@ -85,7 +84,7 @@ node_t *env_getvar(env_t *env, const char *name)
 bool env_setvar(env_t *env, const char *name, void *value)
 {
         if (env == NULL || name == NULL)
-                error_fatal("Environment or name is null.");
+                error_exit("Environment or name is null.");
 
         env_t *current_env = env;
         while (current_env) {

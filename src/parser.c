@@ -8,12 +8,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "kilate/debug.h"
+#include "kilate/base.h"
 #include "kilate/file.h"
 #include "kilate/lexer.h"
 #include "kilate/native.h"
 #include "kilate/node.h"
-#include "kilate/string.h"
+#include "kilate/stringutils.h"
 #include "kilate/vector.h"
 
 parser_t *parser_make(token_vector_t *tokens)
@@ -46,12 +46,12 @@ token_t *parser_current(parser_t *p, size_t offset)
         return *(token_t **)vector_get(p->tokens, pos);
 }
 
-token_t *parser_consume(parser_t *p, token_kind_t exType)
+token_t *parser_consume(parser_t *p, token_kind_t expected)
 {
         token_t *tk = parser_current(p, 0);
-        if (tk->type != exType) {
+        if (tk->type != expected) {
                 parser_error(tk, "Expected %s, but got %s",
-                             tokentype_tostr(exType),
+                             tokentype_tostr(expected),
                              tokentype_tostr(tk->type));
                 return NULL;
         }
@@ -61,31 +61,22 @@ token_t *parser_consume(parser_t *p, token_kind_t exType)
 
 static void print_nodes(parser_t *p)
 {
-        printd("Nodes am: %zu\n", p->nodes->size);
         for (size_t i = 0; i < p->nodes->size; i++) {
                 node_t *n = *(node_t **)vector_get(p->nodes, i);
-                printd("Node(%lu).type = (%s)\n", i,
-                       (n) ? node_kind_tostr(n->type) : "(null)");
         }
 }
 
 function_node_t *parser_find_function(parser_t *p, char *name)
 {
-        printd("Searching for fn: %s\n", name);
-        printd("Total nodes: %zu\n", p->nodes->size);
-
         for (size_t i = 0; i < p->nodes->size; i++) {
                 function_node_t *fn = *(node_t **)vector_get(p->nodes, i);
 
                 if (!fn)
                         continue;
 
-                printd("Node %zu type: %d\n", i, fn->type);
-
                 if (fn->type == NODE_FUNCTION) {
                         if (!str_equals(fn->function_n.name, name))
                                 continue;
-                        printd("Fn found: %s\n", fn->function_n.name);
                         return fn;
                 }
         }
@@ -94,9 +85,6 @@ function_node_t *parser_find_function(parser_t *p, char *name)
 
 vardec_node_t *parser_find_var(parser_t *p, char *name)
 {
-        printd("Searching for var: %s\n", name);
-        printd("Total nodes: %zu\n", p->nodes->size);
-
         // find at top-level nodes
         for (size_t i = 0; i < p->nodes->size; i++) {
                 vardec_node_t *var = *(node_t **)vector_get(p->nodes, i);
@@ -104,12 +92,9 @@ vardec_node_t *parser_find_var(parser_t *p, char *name)
                 if (!var)
                         continue;
 
-                printd("Node %zu type: %d\n", i, var->type);
-
                 if (var->type == NODE_VARDEC) {
                         if (!str_equals(var->vardec_n.name, name))
                                 continue;
-                        printd("Var found: %s\n", var->vardec_n.name);
                         return var;
                 }
         }
@@ -120,34 +105,13 @@ vardec_node_t *parser_find_var(parser_t *p, char *name)
                 if (!var)
                         continue;
 
-                printd("Node %zu type: %d\n", i, var->type);
-
                 if (var->type == NODE_VARDEC) {
                         if (!str_equals(var->vardec_n.name, name))
                                 continue;
-                        printd("Var found: %s\n", var->vardec_n.name);
                         return var;
                 }
         }
         return NULL;
-}
-
-char *parser_tokentype_to_str(token_kind_t type)
-{
-        switch (type) {
-        case TOKEN_STRING:
-                return "String";
-        case TOKEN_BOOL:
-                return "Nool";
-        case TOKEN_INT:
-                return "Int";
-        case TOKEN_FLOAT:
-                return "Float";
-        case TOKEN_LONG:
-                return "Long";
-        default:
-                return "unknown";
-        }
 }
 
 char *parser_nodevaluetype_to_str(node_value_kind_t type)
@@ -174,7 +138,6 @@ char *parser_nodevaluetype_to_str(node_value_kind_t type)
 
 node_value_kind_t parser_tokentype_to_nodevaluetype(parser_t *p, token_t *tk)
 {
-        // printd("121: %d, %s\n", tk->type, tk->text);
         switch (tk->type) {
         case TOKEN_STRING:
                 return NODE_VALUE_TYPE_STRING;
@@ -188,8 +151,6 @@ node_value_kind_t parser_tokentype_to_nodevaluetype(parser_t *p, token_t *tk)
                 return NODE_VALUE_TYPE_LONG;
         case TOKEN_IDENTIFIER: {
                 token_t *next = parser_current(p, 1);
-                // printd("CUR:%s NEXT:%s\n", tk->text, next ? next->text :
-                // "NULL"); printd("135:%s\n", next->text);
                 if (next->type == TOKEN_LPAREN || next->type == TOKEN_LARROW ||
                     next->type == TOKEN_RARROW) {
                         return NODE_VALUE_TYPE_CALL;
@@ -238,8 +199,6 @@ node_t *parser_parse_statement(parser_t *p)
         am++;
 
         token_t *tk = parser_current(p, 0);
-        printd("parser_parse_statement called %d times, cur token: %s\n", am,
-               tk->text);
 
         if (tk->type == TOKEN_KEYWORD && str_equals(tk->text, "return")) {
                 parser_consume(p, TOKEN_KEYWORD);
@@ -388,7 +347,6 @@ node_t *parser_parse_statement(parser_t *p)
                                      "expected '%s', got '%s', raw: %d",
                                      varname, expected, actual, valueTk->type);
                 }
-                printd("Var(%s) = (%s)\n", varname, valueTk->text);
                 return varnode;
         } else if (tk->type == TOKEN_IDENTIFIER) {
                 // TODO: This case can be also a variable declarion of user own
@@ -423,23 +381,19 @@ node_param_vector_t *parser_parse_fnparams(parser_t *p)
                 param_node_t *fn_param = alloc_node(NODE_ARG);
                 node_value_kind_t vkind =
                     parser_tokentype_to_nodevaluetype(p, param);
-                // printd("358: %d, %s\n", vkind, param->text);
                 if (vkind == NODE_VALUE_TYPE_CALL) {
                         call_node_t *callnode =
                             parser_parse_call_node(p, param);
                         fn_param->arg_n.type = NODE_VALUE_TYPE_CALL;
                         fn_param->arg_n.n = callnode;
                 } else if (vkind == NODE_VALUE_TYPE_FUNC_OR_VAR) {
-                        printd("before consume: %s\n", param->text);
                         parser_consume(p, param->type);
-                        printd("after consume: %s\n", param->text);
                         bool f = false;
                         function_node_t *fn =
                             parser_find_function(p, param->text);
                         if (fn && !f) {
                                 fn_param->arg_n.type = NODE_VALUE_TYPE_FUNC;
                                 fn_param->arg_n.n = fn;
-                                printd("fn: %s\n", param->text);
                                 f = true;
                         }
 
@@ -448,7 +402,6 @@ node_param_vector_t *parser_parse_fnparams(parser_t *p)
                         if (nfn && !f) {
                                 fn_param->arg_n.type = NODE_VALUE_TYPE_FUNC;
                                 fn_param->arg_n.n = nfn;
-                                printd("nfn: %s\n", param->text);
                                 f = true;
                         }
 
@@ -456,7 +409,6 @@ node_param_vector_t *parser_parse_fnparams(parser_t *p)
                         if (var && !f) {
                                 fn_param->arg_n.type = NODE_VALUE_TYPE_VAR;
                                 fn_param->arg_n.s = param->text;
-                                printd("var: %s\n", param->text);
                                 f = true;
                         }
 
@@ -520,8 +472,6 @@ node_t *parser_parse_call_node(parser_t *p, token_t *tk)
 {
         char *name = parser_consume(p, TOKEN_IDENTIFIER)->text;
         token_t *next = parser_current(p, 0);
-
-        // printd("446: %d, %s\n", next->type, next->text);
 
         // call with () no params
         if (next->type == TOKEN_LPAREN) {
@@ -595,10 +545,7 @@ node_t *parser_parse_import(parser_t *p)
         parser_consume(p, TOKEN_KEYWORD);
         token_t *path_token = parser_consume(p, TOKEN_STRING);
 
-        file_t file;
-        file_open(&file, path_token->text, FILE_MODE_READ);
-
-        char *src = file_read_text(&file);
+        char *src = file_read_all(path_token->text);
         if (!src) {
                 parser_error(path_token, "Failed to read import: %s",
                              path_token->text);
@@ -621,7 +568,6 @@ node_t *parser_parse_import(parser_t *p)
 
         parser_delete(new_parser);
         lexer_delete(lexer);
-        file_close(&file);
         free(src);
 
         return NULL;
@@ -635,7 +581,8 @@ node_t *parser_parse_function(parser_t *p)
         }
 
         function_node_t *fn = alloc_node(NODE_FUNCTION);
-        fn->function_n.name = strdup(parser_consume(p, TOKEN_IDENTIFIER)->text);
+        fn->function_n.name =
+            strdup(parser_consume(p, TOKEN_IDENTIFIER)->text);
 
         parser_consume(p, TOKEN_LPAREN);
         fn->function_n.params = vector_make(sizeof(param_node_t *));

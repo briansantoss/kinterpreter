@@ -1,10 +1,10 @@
-#ifndef __NATIVE_UTIL_H__
-#define __NATIVE_UTIL_H__
+#ifndef KILATE_NATIVE_UTIL_H
+#define KILATE_NATIVE_UTIL_H
 
 #include <stddef.h>
 #include <stdlib.h>
 
-#include "kilate/native.h"
+#include "kilate/nativeutils.h"
 #include "kilate/node.h"
 
 #ifdef __cplusplus

@@ -1,5 +1,5 @@
-#ifndef __VECTOR_H__
-#define __VECTOR_H__
+#ifndef KILATE_VECTOR_H
+#define KILATE_VECTOR_H
 
 #include <stdio.h>
 
@@ -14,7 +14,7 @@ typedef struct {
         size_t itemSize;
 } vector_t;
 
-vector_t *vector_make(size_t);
+vector_t *vector_make(size_t item_size);
 
 void vector_delete(vector_t *);
 

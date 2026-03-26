@@ -27,41 +27,41 @@ set(CMAKE_EXE_LINKER_FLAGS
 
 set(LIB_SOURCES
     src/config.c
-    src/debug.c
     src/environment.c
     src/error.c
     src/file.c
-    src/interpreter.c
     src/hashmap.c
+    src/interpreter.c
     src/lexer.c
+    src/native.c
+    src/nativeutils.c
     src/node.c
     src/parser.c
-    src/native.c
-    src/string.c
-    src/vector.c
-    src/util/native.c)
+    src/stringutils.c
+    src/vector.c)
 
-set(HEADERS
+set(LIB_HEADERS
+    include/kilate/base.h
     include/kilate/config.h
     include/kilate/environment.h
-    include/kilate/error.h
     include/kilate/file.h
     include/kilate/hashmap.h
     include/kilate/interpreter.h
     include/kilate/lexer.h
+    include/kilate/native.h
+    include/kilate/nativeutils.h
     include/kilate/node.h
     include/kilate/parser.h
-    include/kilate/native.h
-    include/kilate/string.h
-    include/kilate/vector.h
-    include/kilate/util/native.h)
+    include/kilate/platform.h
+    include/kilate/stringutils.h
+    include/kilate/vector.h)
 
 set(EXE_SOURCES
     src/main.c
     ${LIB_SOURCES}) # Add libs sources to executable, to avoid unused files removal.
 
 if(BUILD_SHARED_LIBS)
-  add_library(${PROJECT_NAME}_shared SHARED ${LIB_SOURCES} ${HEADERS})
+  add_library(${PROJECT_NAME}_shared SHARED ${LIB_SOURCES} ${LIB_HEADERS})
   set_target_properties(${PROJECT_NAME}_shared PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
   target_include_directories(${PROJECT_NAME}_shared
     PUBLIC
@@ -71,7 +71,7 @@ if(BUILD_SHARED_LIBS)
 endif()
 
 if(BUILD_STATIC_LIBS)
-  add_library(${PROJECT_NAME}_static STATIC ${LIB_SOURCES} ${HEADERS})
+  add_library(${PROJECT_NAME}_static STATIC ${LIB_SOURCES} ${LIB_HEADERS})
   set_target_properties(${PROJECT_NAME}_static PROPERTIES OUTPUT_NAME ${PROJECT_NAME}_static)
   target_include_directories(${PROJECT_NAME}_static
     PUBLIC

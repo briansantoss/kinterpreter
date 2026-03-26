@@ -10,7 +10,7 @@
 
 #include "kilate/config.h"
 #include "kilate/node.h"
-#include "kilate/string.h"
+#include "kilate/stringutils.h"
 #include "kilate/vector.h"
 
 node_vector_t *native_functions = NULL;

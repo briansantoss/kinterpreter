@@ -1,15 +1,13 @@
 #include "kilate/lexer.h"
 
 #include <ctype.h>
-#include <stdarg.h>
-
 #include <stdint.h>
 #include <stdio.h>
+#include <stdarg.h>
 #include <stdlib.h>
-#include <string.h>
+#include <stdbool.h>
 
-#include "kilate/bool.h"
-#include "kilate/string.h"
+#include "kilate/stringutils.h"
 
 lexer_t *lexer_make(char *input)
 {
@@ -26,11 +24,9 @@ void lexer_delete(lexer_t *lexer)
 {
         for (size_t i = 0; i < lexer->tokens->size; ++i) {
                 token_t *tk = *(token_t **)vector_get(lexer->tokens, i);
-                free(tk->text);
                 free(tk);
         }
         vector_delete(lexer->tokens);
-        free(lexer->__input__);
         free(lexer);
 }
 
@@ -250,9 +246,9 @@ void lexer_tokenize(lexer_t *lexer)
                         while (lexer->__pos__ < input_len &&
                                lexer->__input__[lexer->__pos__] != '\n') {
                                 lexer_advance(lexer);
+                                }
+                                continue;
                         }
-                        continue;
-                }
                 if (str_starts_with(lexer->__input__, "->", lexer->__pos__)) {
                         size_t tkl = lexer->__line__;
                         size_t tkc = lexer->__column__;
@@ -261,8 +257,8 @@ void lexer_tokenize(lexer_t *lexer)
                         vector_push_back(lexer->tokens, &token);
 
                         lexer->__pos__ += 2;
-                        continue;
-                }
+                                continue;
+                        }
                 if (str_starts_with(lexer->__input__, "<-", lexer->__pos__)) {
                         size_t tkl = lexer->__line__;
                         size_t tkc = lexer->__column__;
@@ -380,7 +376,9 @@ void lexer_tokenize(lexer_t *lexer)
                         free(word);
                         continue;
                 }
-                lexer_error(lexer, "Unexpected character %c", c);
+                lexer_error(lexer,
+                            "Character '%c' outside of a string or comment.",
+                            c);
                 break;
         }
         size_t tkl = lexer->__line__;

@@ -1,7 +1,7 @@
-#ifndef __STRING_H__
-#define __STRING_H__
+#ifndef KILATE_STRING_UTILS_H
+#define KILATE_STRING_UTILS_H
 
-#include <stdarg.h>
+#include <stdbool.h>
 #include <stdlib.h>
 
 #include "kilate/vector.h"

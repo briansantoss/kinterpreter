@@ -1,9 +1,9 @@
-#ifndef __NATIVE_H__
-#define __NATIVE_H__
+#ifndef KILATE_NATIVE_H
+#define KILATE_NATIVE_H
 
 #include "kilate/environment.h"
 #include "kilate/interpreter.h"
-#include "kilate/string.h"
+#include "kilate/stringutils.h"
 
 #ifdef __cplusplus
 extern "C" {

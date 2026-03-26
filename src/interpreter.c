@@ -4,9 +4,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "kilate/debug.h"
+#include "kilate/base.h"
 #include "kilate/environment.h"
-#include "kilate/error.h"
 #include "kilate/hashmap.h"
 #include "kilate/native.h"
 #include "kilate/node.h"
@@ -16,9 +15,9 @@ interpreter_t *interpreter_make(node_vector_t *nodes_vector,
                                 node_vector_t *native_functions_nodes_vector)
 {
         if (nodes_vector == NULL)
-                error_fatal("Node's Vector is invalid.");
+                error_exit("Node's Vector is invalid.");
         if (native_functions_nodes_vector == NULL)
-                error_fatal("Native Functions Node's Vector is invalid.");
+                error_exit("Native Functions Node's Vector is invalid.");
 
         interpreter_t *interpreter = malloc(sizeof(interpreter_t));
         interpreter->functions = hash_map_make(sizeof(node_t *));
@@ -66,19 +65,19 @@ void interpreter_delete(interpreter_t *self)
 interpreter_result_t interpreter_run(interpreter_t *self)
 {
         if (self == NULL)
-                error_fatal("Interpreter is invalid.");
+                error_exit("Interpreter is invalid.");
 
         node_t **mainPtr =
             (node_t **)hash_map_get(self->functions, MAIN_FUNCTION_NAME);
         if (mainPtr == NULL) {
-                error_fatal("Your program needs a " MAIN_FUNCTION_NAME
+                error_exit("Your program needs a " MAIN_FUNCTION_NAME
                             " function!");
         }
         node_t *main = *mainPtr;
 
         if (main->function_n.return_type == NULL ||
             !str_equals(main->function_n.return_type, MAIN_FUNCTION_RETURN)) {
-                error_fatal(MAIN_FUNCTION_NAME
+                error_exit(MAIN_FUNCTION_NAME
                             " function should return bool.");
         }
 
@@ -114,16 +113,14 @@ interpreter_result_t interpreter_run_fn(interpreter_t *self, node_t *func,
                                         node_arg_vector_t *params)
 {
         if (self == NULL)
-                error_fatal("Interpreter is invalid.");
+                error_exit("Interpreter is invalid.");
 
         if (func == NULL || func->type != NODE_FUNCTION) {
-                error_fatal("Function Node Not is a Valid Function.");
+                error_exit("Function Node Not is a Valid Function.");
         }
 
-        printd("125: %s\n", (func->function_n.native) ? "true" : "false");
-
         if (!func->function_n.body) {
-                error_fatal("Function body is not Valid.");
+                error_exit("Function body is not Valid.");
         }
 
         env_t *old = self->env;
@@ -140,7 +137,7 @@ interpreter_result_t interpreter_run_fn(interpreter_t *self, node_t *func,
 
                         if (fnParam->arg_n.type != NODE_VALUE_TYPE_ANY &&
                             fnParam->arg_n.type != svalue.type) {
-                                error_fatal(
+                                error_exit(
                                     "Argument %zu to function '%s' expected "
                                     "type '%s', but got '%s'",
                                     i + 1, func->function_n.name,
@@ -159,7 +156,6 @@ interpreter_result_t interpreter_run_fn(interpreter_t *self, node_t *func,
                 }
         }
 
-        printd("158: %s\n", func->function_n.name);
         for (size_t i = 0; i < func->function_n.body->size; i++) {
                 node_t **stmtPtr =
                     (node_t **)vector_get(func->function_n.body, i);
@@ -187,9 +183,9 @@ interpreter_result_t interpreter_run_fn(interpreter_t *self, node_t *func,
 interpreter_result_t interpreter_run_node(interpreter_t *self, node_t *n)
 {
         if (self == NULL)
-                error_fatal("Interpreter is invalid.");
+                error_exit("Interpreter is invalid.");
         if (n == NULL)
-                error_fatal("Node is invalid.");
+                error_exit("Node is invalid.");
 
         switch (n->type) {
         case NODE_CALL: {
@@ -197,7 +193,7 @@ interpreter_result_t interpreter_run_node(interpreter_t *self, node_t *n)
                     (node_t **)hash_map_get(self->functions, n->call_n.name);
 
                 if (!fnptr) {
-                        error_fatal("Function not found: %s", n->call_n.name);
+                        error_exit("Function not found: %s", n->call_n.name);
                 }
 
                 function_node_t *fn = *fnptr;
@@ -213,15 +209,13 @@ interpreter_result_t interpreter_run_node(interpreter_t *self, node_t *n)
         }
 
         case NODE_VARDEC: {
-                printd("213: vname:%s, vtype:%d\n", n->vardec_n.name,
-                       n->vardec_n.type);
                 env_definevar(self->env, n->vardec_n.name, node_copy(n));
                 return (interpreter_result_t){ .type = IRT_FUNC,
                                                .value.type = -1 };
         }
 
         default:
-                error_fatal("Unknown node type %d", n->type);
+                mate_unreachable();
         }
         return (interpreter_result_t){ .type = IRT_FUNC, .value.type = -1 };
 }

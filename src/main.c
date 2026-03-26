@@ -2,34 +2,35 @@
 #include <string.h>
 
 #include "kilate/config.h"
-#include "kilate/error.h"
 #include "kilate/file.h"
 #include "kilate/interpreter.h"
 #include "kilate/lexer.h"
 #include "kilate/native.h"
 #include "kilate/parser.h"
-#include "kilate/string.h"
+#include "kilate/stringutils.h"
 #include "kilate/vector.h"
 
 int interpret(char *src)
 {
         lexer_t *lexer = lexer_make(src);
         if (lexer == NULL)
-                error_fatal("Lexer is null.");
+                error_exit("Lexer is null.");
+
         lexer_tokenize(lexer);
+        return 0;
 
         native_init();
 
         parser_t *parser = parser_make(lexer->tokens);
         if (parser == NULL)
-                error_fatal("Parser is null.");
+                error_exit("Parser is null.");
 
         parser_parse_program(parser);
 
         interpreter_t *interpreter =
             interpreter_make(parser->nodes, native_functions);
         if (interpreter == NULL)
-                error_fatal("Interpreter is null.");
+                error_exit("Interpreter is null.");
         interpreter_result_t result = interpreter_run(interpreter);
         parser_delete(parser);
         interpreter_delete(interpreter);
@@ -90,7 +91,7 @@ int run(int argc, char *argv[])
                 }
         }
 
-        char *filename = argv[2];
+        const char *filepath = argv[2];
         for (int i = 3; i < argc; i++) {
                 char *arg = argv[i];
                 if (arg[0] == '-') {
@@ -108,17 +109,7 @@ int run(int argc, char *argv[])
                 }
         }
 
-        file_t file;
-        if (file_open(&file, filename, FILE_MODE_READ) != 0) {
-                error_fatal("Failed to open %s", filename);
-                return -1;
-        }
-        char *src = file_read_text(&file);
-        if (!src) {
-                error_fatal("Failed to read %s", filename);
-                return -1;
-        }
-        file_close(&file);
+        const char *src = file_read_all(filepath);
 
         int res = interpret(src);
         free(src);

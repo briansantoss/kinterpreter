@@ -1,10 +1,9 @@
-#ifndef __NODE_H__
-#define __NODE_H__
+#ifndef KILATE_NODE_H
+#define KILATE_NODE_H
 
-#include <malloc.h>
-
-#include "kilate/bool.h"
 #include "kilate/vector.h"
+#include <stdbool.h>
+#include <stdlib.h>
 
 #ifdef __cplusplus
 extern "C" {

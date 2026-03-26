@@ -1,5 +1,5 @@
-#ifndef __CONFIG__
-#define __CONFIG__
+#ifndef KILATE_CONFIG_H
+#define KILATE_CONFIG_H
 
 #include "kilate/vector.h"
 
