@@ -1,5 +1,4 @@
 require "fileutils"
-require "./nativelib.rb"
 
 install_arg = false
 run_arg = false
@@ -7,7 +6,6 @@ termux_arg = false
 asan_arg = false
 clean_arg = false
 lib_so_arg = false
-nostd_arg = false
 compile_commands_json_arg = false
 
 YELLOW = "\e[33m"
@@ -33,7 +31,6 @@ def print_help_and_close
   puts "#{LGREEN}-as   or --asan                  #{LMAGENTA}| Enables Address Sanitizer."
   puts "#{LGREEN}-c    or --clean                 #{LMAGENTA}| Cleanup build before build again."
   puts "#{LGREEN}-lso  or --libso                 #{LMAGENTA}| Build shared libraries for Android ABIs."
-  puts "#{LGREEN}-free or  -nostd                 #{LMAGENTA}| Don't build the KStandardLibrary."
   puts "#{LGREEN}-ccj  or --compile-commands-json #{LMAGENTA}| Export compile_commands.json."
   puts
   puts "#{YELLOW}WARNING"
@@ -55,8 +52,6 @@ ARGV.each do |arg|
       clean_arg = true
     when "-lso", "--libso"
       lib_so_arg = true
-    when "-free", "--nostd"
-      nostd_arg = true
     when "-ccj", "--compile-commands-json"
       compile_commands_json_arg = true
     when "-h", "--help"
@@ -70,14 +65,6 @@ ENV["ASAN"] = "ON" if asan_arg
 
 FileUtils.rm_rf("build") if clean_arg
 FileUtils.mkdir_p("build")
-
-# Build Std Native
-Kilate::Std::Native.build(
-  "knative",
-  "std/native/",
-  "std/native/include",
-  "include"
-) unless nostd_arg
 
 if lib_so_arg
   abis = ["armeabi-v7a", "arm64-v8a", "x86", "x86_64"]
